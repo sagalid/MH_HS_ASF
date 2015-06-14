@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - harmony@sagalid.cl" uuid="28c364b0-3400-449d-957f-3b08ff6e2b3f">
+    <database-info product="MySQL" version="5.5.43-0ubuntu0.14.04.1" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <schema name="" catalog="harmony"/>
+    <table name="BEST_AND_WORST" schema="" catalog="harmony" type="TABLE">
+      <column name="BEST_AND_WORST_ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="EXE_REGISTER_ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="BEST_HARMONY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="WORST_HARMONY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="BEST_INDEX" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="WORST_INDEX" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="BEST_AND_WORST_ID"/>
+      <foreign-key name="BEST_AND_WORST_ibfk_1" columns="EXE_REGISTER_ID" ref-table="EXE_REGISTER" ref-schema="" ref-catalog="harmony" ref-columns="EXE_REGISTER_ID" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="unique_BEST_AND_WORST_ID" unique="true" columns="BEST_AND_WORST_ID"/>
+    </table>
+    <table name="EXE_REGISTER" schema="" catalog="harmony" type="TABLE">
+      <column name="EXE_REGISTER_ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="HARMONY_MEMORY_SIZE" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="MAX_IMPROVISACIONES" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="HMCR_MAX" sqlType="FLOAT" precision="12" scale="0" nullable="false" jdbcType="7"/>
+      <column name="HMCR_MIN" sqlType="FLOAT" precision="12" scale="0" nullable="false" jdbcType="7"/>
+      <column name="PAR" sqlType="FLOAT" precision="12" scale="0" nullable="false" jdbcType="7"/>
+      <column name="BERNOULLI_P" sqlType="FLOAT" precision="12" scale="0" nullable="false" jdbcType="7"/>
+      <column name="MUTATION_P" sqlType="FLOAT" precision="12" scale="0" nullable="false" jdbcType="7"/>
+      <column name="INDEX_BEST_HARMONY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="INDEX_WORST_HARMONY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="SEED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="EXE_INIT" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="EXE_END" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="EXE_REGISTER_ID"/>
+      <exported-key name="BEST_AND_WORST_ibfk_1" table="BEST_AND_WORST" schema="" catalog="harmony" columns="EXE_REGISTER_ID"/>
+    </table>
+  </data-source>
+</component>
