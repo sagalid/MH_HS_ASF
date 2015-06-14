@@ -96,6 +96,7 @@ def reparacion_de_armonia(vector_armonia):
     """DROP"""
     ganancia = getVectorCosto()
     if cumple:
+        print "DROP PHASE"
         lambda_j = ganancia * vector_armonia
         ind_j = sorted(range(len(lambda_j)), key=lambda x: lambda_j[x], reverse=True)
         i = 0
@@ -112,6 +113,7 @@ def reparacion_de_armonia(vector_armonia):
                     vector_armonia[ind_j[i]] = 1
             i += 1
     else:
+        print "ADD PHASE"
         mu_j = ganancia * vector_armonia
         ind_j = sorted(range(len(mu_j)), key=lambda x: mu_j[x])
 
@@ -119,6 +121,7 @@ def reparacion_de_armonia(vector_armonia):
         for tono in vector_armonia:
             # print "Tono ADD: " + str(tono)
             if vector_armonia[ind_j[i]] == 0:
+                vector_prima = []
                 vector_prima = vector_armonia
                 vector_prima[ind_j[i]] = 1
                 if cumple_restricciones(vector_prima) and evaluarConFuncionObjetivo(
