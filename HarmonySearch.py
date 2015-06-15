@@ -18,7 +18,7 @@ from Parseo_Archivo import getMatrizA
 HARMONY_MEMORY_SIZE = 5
 MAX_IMPROVISACIONES = 1000
 HMCR_MAX = 0.95
-HMCR_MIN = 0.3
+HMCR_MIN = 0.1 # 0.3 sugerido
 PAR = 0.75
 IMPROVISACION = 1
 BERNOULLI_P = 0.5  # http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
