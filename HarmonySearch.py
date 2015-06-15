@@ -16,7 +16,7 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 1000
+MAX_IMPROVISACIONES = 2000
 HMCR_MAX = 0.95  # 0.95 sugerido
 HMCR_MIN = 0.05  # 0.3 sugerido
 PAR = 0.005  # 0.75 sugerido
