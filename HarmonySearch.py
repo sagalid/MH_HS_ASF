@@ -16,7 +16,7 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 10
+MAX_IMPROVISACIONES = 100
 HMCR_MAX = 0.95
 HMCR_MIN = 0.3
 PAR = 0.75
@@ -86,72 +86,58 @@ def genera_poblacion_inicial(HARMONY_MEMORY):
 
 # IMPLEMENTADA
 def reparacion_de_armonia(vector_armonia):
-    """
+    print "Valor armonia original: " + str(evaluarConFuncionObjetivo(vector_armonia))
+    a_transpuesta = np.transpose(getMatrizA())
+    matriz_a = getMatrizA()
+    armonia_temporal = []
+    restriccion_incumplida = []
+    restriccion_incumplida = np.dot(vector_armonia, a_transpuesta)
 
-    :rtype : Vector reparado.
-    """
-    valor = evaluarConFuncionObjetivo(vector_armonia)
-    print "Valor armonia antes de reparacion: " + str(valor)
-    cumple = cumple_restricciones(vector_armonia)
-    """DROP"""
-    ganancia = getVectorCosto()
-    if cumple:
-        print "DROP PHASE"
-        lambda_j = ganancia * vector_armonia
-        ind_j = sorted(range(len(lambda_j)), key=lambda x: lambda_j[x], reverse=True)
-        i = 0
-        for tono in vector_armonia:
+    # Fase ADD
+    i = 0
+    for restriccion in restriccion_incumplida:
+        if restriccion == 0:
+            row = matriz_a[i]
+            j = 0
+            for tono in row:
+                if tono == 1:
+                    break
+                j += 1
+            vector_armonia[j] = 1
 
-            if lambda_j[i] == 0:
-                pass
-            else:
-                # print "Tono DROP: " + str(tono)
-                vector_armonia[ind_j[i]] = 0
-                if cumple_restricciones(vector_armonia):
-                    pass
-                else:
-                    vector_armonia[ind_j[i]] = 1
-            i += 1
-    else:
-        print "ADD PHASE"
-        mu_j = ganancia * vector_armonia
-        ind_j = sorted(range(len(mu_j)), key=lambda x: mu_j[x])
+        i += 1
 
-        i = 0
-        for tono in vector_armonia:
-            # print "Tono ADD: " + str(tono)
-            if vector_armonia[ind_j[i]] == 0:
-                vector_prima = []
-                vector_prima = vector_armonia
-                vector_prima[ind_j[i]] = 1
-                if cumple_restricciones(vector_prima) and evaluarConFuncionObjetivo(
-                        vector_prima) <= evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]):
-                    vector_armonia[ind_j[i]] = 1
-            i += 1
+    armonia_temporal = vector_armonia
 
+    # Fase DROP
+
+    for restriccion in matriz_a:
+
+        target = 1
+        for index, val in enumerate(restriccion):
+            if val == 1:
+                lastIndexOf = index
+
+        armonia_temporal[lastIndexOf] = 0
+        if not cumple_restricciones(armonia_temporal):
+            armonia_temporal[lastIndexOf] = 1
+
+    vector_armonia = armonia_temporal
     print "Valor armonia reparada: " + str(evaluarConFuncionObjetivo(vector_armonia))
 
     return vector_armonia
 
 # IMPLEMENTADA
 def cumple_restricciones(vector_armonia):
-    matriz_a = getMatrizA()
-    cumple = []
-    sum_restricciones_cumplidas = 0
-    cantidad_columnas = getCantidadColumnas()
+    a_transpuesta = np.transpose(getMatrizA())
+    restriccion_incumplida = np.dot(vector_armonia, a_transpuesta)
+    cumple = True
 
-    for restriccion in matriz_a:
-        posicion_evaluada = 0
-        for variable in restriccion:
-            if variable == 1 == vector_armonia[posicion_evaluada]:
-                if posicion_evaluada < cantidad_columnas - 1:
-                    cumple.append(1)
-            posicion_evaluada += 1
+    for restriccion in restriccion_incumplida:
+        if restriccion == 0:
+            cumple = False
 
-        if sum(cumple) > 0:
-            sum_restricciones_cumplidas += 1
-
-    if sum_restricciones_cumplidas == cantidad_columnas:
+    if cumple:
         return True
     else:
         return False
