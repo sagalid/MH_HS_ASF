@@ -16,7 +16,7 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 100
+MAX_IMPROVISACIONES = 1000
 HMCR_MAX = 0.95
 HMCR_MIN = 0.3
 PAR = 0.75
@@ -200,7 +200,7 @@ def crearNuevaArmonia(iteador_t):
         numero_random2 = random.random()
         hmcr_calculado = calcularHMCR(iteador_t)
         if numero_random <= hmcr_calculado:
-            print "Se realiza ajuste de HMCR tono mejor armonia a actual"
+            # print "Se realiza ajuste de HMCR tono mejor armonia a actual"
             nueva_armonia[j] = mejor_armonia[j]
         else:
             a = random.randint(0, HARMONY_MEMORY_SIZE - 1)
@@ -209,7 +209,7 @@ def crearNuevaArmonia(iteador_t):
             vector_a = HARMONY_MEMORY[a]
             nueva_armonia[j] = vector_a[j]
             if numero_random2 <= PAR:
-                print "Se realiza mutacion genetica"
+                # print "Se realiza mutacion genetica"
                 nueva_armonia[j] = math.fabs(nueva_armonia[j] - 1)
         j += 1
 
@@ -334,7 +334,7 @@ def ejecucionMH():
 
     i = 1
     while i < MAX_IMPROVISACIONES:
-        print "<--------------------INI de la ejecucion: ", (i), "--------------------"
+        print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
         almacenaMejorYPeorArmonia()
         nuevo_vector_armonia = crearNuevaArmonia(i)
         nuevo_vector_armonia = reparacion_de_armonia(nuevo_vector_armonia)
@@ -347,7 +347,7 @@ def ejecucionMH():
         insert_best_and_worst()
         # Incrementa la Improvisacion en uno
         print "Elementos en HM: " + str(len(HARMONY_MEMORY))
-        print "<--------------------FIN de la ejecucion: ", (i), "--------------------"
+        print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
 
 # IMPLEMENTADA
