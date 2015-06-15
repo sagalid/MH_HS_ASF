@@ -17,12 +17,12 @@ from Parseo_Archivo import getMatrizA
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
 MAX_IMPROVISACIONES = 1000
-HMCR_MAX = 0.4  # 0.95 sugerido
+HMCR_MAX = 0.95  # 0.95 sugerido
 HMCR_MIN = 0.1  # 0.3 sugerido
 PAR = 0.005  # 0.75 sugerido
 IMPROVISACION = 1
 BERNOULLI_P = 0.5  # http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
-MUTATION_P = 0.001  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
+MUTATION_P = 0.01  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
 SEED = 0
 RANDOM_UNO = 0
 INDEX_BEST_HARMONY = 0
