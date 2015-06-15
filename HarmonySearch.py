@@ -71,7 +71,7 @@ def nueva_armonia_agresiva():
     # print nueva_armonia
     fitness = evaluarConFuncionObjetivo(nueva_armonia)
 
-    print "Valor armonia agresiva: " + str(fitness)
+    # print "Valor armonia agresiva: " + str(fitness)
 
     return nueva_armonia
 
@@ -213,7 +213,7 @@ def crearNuevaArmonia(iteador_t):
                 nueva_armonia[j] = math.fabs(nueva_armonia[j] - 1)
         j += 1
 
-    print "costo nueva armonia: " + str(evaluarConFuncionObjetivo(nueva_armonia))
+    #print "costo nueva armonia: " + str(evaluarConFuncionObjetivo(nueva_armonia))
 
     return nueva_armonia
 
@@ -250,8 +250,8 @@ def insert_best_and_worst():
     global INDEX_BEST_HARMONY
     global INDEX_WORST_HARMONY
 
-    print evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY])
-    print evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_WORST_HARMONY])
+    print "Mejor Valor: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
+    print "Peor Valor: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_WORST_HARMONY]))
 
     try:
         conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
@@ -346,7 +346,7 @@ def ejecucionMH():
 
         insert_best_and_worst()
         # Incrementa la Improvisacion en uno
-        print "Elementos en HM: " + str(len(HARMONY_MEMORY))
+        # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
         print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
 
