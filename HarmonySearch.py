@@ -300,6 +300,7 @@ def insertExe_REGISTER():
                     "%s, "
                     "%s, "
                     "%s,"
+                    "%s,"
                     "%s)",
                     (HARMONY_MEMORY_SIZE,
                      MAX_IMPROVISACIONES,
@@ -313,7 +314,8 @@ def insertExe_REGISTER():
                      SEED,
                      a,
                      a,
-                     ARCHIVO))
+                     ARCHIVO,
+                     str(0)))
         conn.commit()
         EXECUTION_REGISTER_ID = cur.lastrowid
         print "ID Registro " + str(EXECUTION_REGISTER_ID)
@@ -331,14 +333,18 @@ def actualiza_exe_register():
         cur = conn.cursor()
         now = datetime.datetime.now()
         a = now.strftime('%Y-%m-%d %H:%M:%S')
-        """cur.execute("UPDATE EXE_REGISTER SET EXE_END=%s WHERE EXE_REGISTER_ID=%s", a, EXECUTION_REGISTER_ID)"""
-        cur.execute ("""
+        cur.execute("""
           UPDATE EXE_REGISTER
           SET EXE_END=%s,
           INDEX_BEST_HARMONY=%s,
-          INDEX_WORST_HARMONY=%s
+          INDEX_WORST_HARMONY=%s,
+          MENOR_VALOR=%s,
+          HARMONY_MEMORY_SIZE=%s
           WHERE EXE_REGISTER_ID=%s
-          """, (a, INDEX_BEST_HARMONY, INDEX_WORST_HARMONY, EXECUTION_REGISTER_ID))
+          """, (a, INDEX_BEST_HARMONY, INDEX_WORST_HARMONY,
+                evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]),
+                str(HARMONY_MEMORY.__len__()),
+                EXECUTION_REGISTER_ID))
 
         conn.commit()
         EXECUTION_REGISTER_ID = cur.lastrowid
