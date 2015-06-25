@@ -16,7 +16,7 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 2000
+MAX_IMPROVISACIONES = 5
 HMCR_MAX = 0.95  # 0.95 sugerido
 HMCR_MIN = 0.05  # 0.3 sugerido
 PAR = 0.005  # 0.75 sugerido
@@ -32,6 +32,7 @@ INDEX_WORST_HARMONY = 0
 HARMONY_MEMORY = []
 BEST_HARMONY = []
 WORST_HARMONY = []
+ARCHIVO = 'scp41.txt'
 
 EXECUTION_REGISTER_ID = 0
 
@@ -279,6 +280,7 @@ def insert_best_and_worst():
 # IMPLEMENTADA
 def insertExe_REGISTER():
     global EXECUTION_REGISTER_ID
+    global ARCHIVO
     try:
         conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
         cur = conn.cursor()
@@ -297,6 +299,7 @@ def insertExe_REGISTER():
                     "%s, "
                     "%s, "
                     "%s, "
+                    "%s,"
                     "%s)",
                     (HARMONY_MEMORY_SIZE,
                      MAX_IMPROVISACIONES,
@@ -309,7 +312,34 @@ def insertExe_REGISTER():
                      INDEX_WORST_HARMONY,
                      SEED,
                      a,
-                     a))
+                     a,
+                     ARCHIVO))
+        conn.commit()
+        EXECUTION_REGISTER_ID = cur.lastrowid
+        print "ID Registro " + str(EXECUTION_REGISTER_ID)
+    except motor.Error as errorValue:
+        print("Error al insertar registro de ejecucion: {}".format(errorValue))
+    finally:
+        cur.close()
+        del cur
+        conn.close()
+
+def actualiza_exe_register():
+    global EXECUTION_REGISTER_ID
+    try:
+        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
+        cur = conn.cursor()
+        now = datetime.datetime.now()
+        a = now.strftime('%Y-%m-%d %H:%M:%S')
+        """cur.execute("UPDATE EXE_REGISTER SET EXE_END=%s WHERE EXE_REGISTER_ID=%s", a, EXECUTION_REGISTER_ID)"""
+        cur.execute ("""
+          UPDATE EXE_REGISTER
+          SET EXE_END=%s,
+          INDEX_BEST_HARMONY=%s,
+          INDEX_WORST_HARMONY=%s
+          WHERE EXE_REGISTER_ID=%s
+          """, (a, INDEX_BEST_HARMONY, INDEX_WORST_HARMONY, EXECUTION_REGISTER_ID))
+
         conn.commit()
         EXECUTION_REGISTER_ID = cur.lastrowid
         print "ID Registro " + str(EXECUTION_REGISTER_ID)
@@ -323,7 +353,8 @@ def insertExe_REGISTER():
 # IMPLEMENTADA
 def ejecucionMH():
     global HARMONY_MEMORY
-    parsear(['scp41.txt'])  # Permite parsear varios archivos, pasandolos como listas.
+    global ARCHIVO
+    parsear([ARCHIVO])  # Permite parsear varios archivos, pasandolos como listas.
     iniciacionHM()
 
     i = 0
@@ -349,7 +380,7 @@ def ejecucionMH():
         # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
         print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
-
+    actualiza_exe_register()
 # IMPLEMENTADA
 def main():
     ejecucionMH()
