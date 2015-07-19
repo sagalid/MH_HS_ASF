@@ -5,6 +5,8 @@ import MySQLdb as motor
 import numpy as np
 import random
 import math
+import sys
+import getopt
 from scipy.stats import bernoulli
 
 from Parseo_Archivo import parsear
@@ -31,14 +33,14 @@ INDEX_WORST_HARMONY = 0
 HARMONY_MEMORY = []
 BEST_HARMONY = []
 WORST_HARMONY = []
-ARCHIVO = ['scp41.txt', 'scp42.txt']
+ARCHIVO = ''
 
 EXECUTION_REGISTER_ID = 0
 
 # IMPLEMENTADA
-def iniciacionHM(archivo_trabajo):
+def iniciacionHM():
     global HARMONY_MEMORY
-    insertExe_REGISTER(archivo_trabajo)
+    insertExe_REGISTER()
     genera_poblacion_inicial(HARMONY_MEMORY)
     nueva_armonia = nueva_armonia_agresiva()
     HARMONY_MEMORY.append(nueva_armonia)
@@ -277,9 +279,9 @@ def insert_best_and_worst():
         conn.close()
 
 # IMPLEMENTADA
-def insertExe_REGISTER(archivo_trabajo):
+def insertExe_REGISTER():
     global EXECUTION_REGISTER_ID
-    # global ARCHIVO
+    global ARCHIVO
     try:
         conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
         cur = conn.cursor()
@@ -313,7 +315,7 @@ def insertExe_REGISTER(archivo_trabajo):
                      SEED,
                      a,
                      a,
-                     archivo_trabajo,
+                     ARCHIVO,
                      str(0)))
         conn.commit()
         EXECUTION_REGISTER_ID = cur.lastrowid
@@ -356,42 +358,54 @@ def actualiza_exe_register():
         conn.close()
 
 # IMPLEMENTADA
-def ejecucionMH():
+def ejecucionMH(inputfile):
     global HARMONY_MEMORY
     global ARCHIVO
+    ARCHIVO = inputfile
+    parsear([ARCHIVO])  # Permite parsear varios archivos, pasandolos como listas.
+    iniciacionHM()
 
-    for archivo_trabajo in ARCHIVO:
+    i = 0
+    for armonia_en_hm in HARMONY_MEMORY:
+        armonia_reparada = reparacion_de_armonia(armonia_en_hm)
+        HARMONY_MEMORY[i] = armonia_reparada
+        i += 1
 
-        parsear([archivo_trabajo])  # Permite parsear varios archivos, pasandolos como listas.
-        iniciacionHM(archivo_trabajo)
+    i = 1
+    while i < MAX_IMPROVISACIONES:
+        print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
+        almacenaMejorYPeorArmonia()
+        nuevo_vector_armonia = crearNuevaArmonia(i)
+        nuevo_vector_armonia = reparacion_de_armonia(nuevo_vector_armonia)
 
-        i = 0
-        for armonia_en_hm in HARMONY_MEMORY:
-            armonia_reparada = reparacion_de_armonia(armonia_en_hm)
-            HARMONY_MEMORY[i] = armonia_reparada
-            i += 1
+        if mejorIgualQueBest(nuevo_vector_armonia):
+            reemplazarMejor(nuevo_vector_armonia)
+        elif mejorIgualQueWorst(nuevo_vector_armonia):
+            reemplazarPeor(nuevo_vector_armonia)
 
-        i = 1
-        while i < MAX_IMPROVISACIONES:
-            print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
-            almacenaMejorYPeorArmonia()
-            nuevo_vector_armonia = crearNuevaArmonia(i)
-            nuevo_vector_armonia = reparacion_de_armonia(nuevo_vector_armonia)
+        insert_best_and_worst()
 
-            if mejorIgualQueBest(nuevo_vector_armonia):
-                reemplazarMejor(nuevo_vector_armonia)
-            elif mejorIgualQueWorst(nuevo_vector_armonia):
-                reemplazarPeor(nuevo_vector_armonia)
-
-            insert_best_and_worst()
-            # Incrementa la Improvisacion en uno
-            # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
-            print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
-            i += 1
-        actualiza_exe_register()
+        # Incrementa la Improvisacion en uno
+        # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
+        print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
+        i += 1
+    actualiza_exe_register()
 # IMPLEMENTADA
-def main():
-    ejecucionMH()
+def main(argv):
+    inputfile = ''
+    try:
+        opts, args = getopt.getopt(argv, "hi:", ["ifile="])
+    except getopt.GetoptError:
+        print 'HarmonySearch.py -i <scp41.txt>'
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'HarmonySearch.py -i <scp41.txt>'
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            inputfile = arg
+
+    ejecucionMH(inputfile)
 
 
-main()
+main(sys.argv[1:])
