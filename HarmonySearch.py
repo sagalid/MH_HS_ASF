@@ -20,7 +20,6 @@ MAX_IMPROVISACIONES = 5
 HMCR_MAX = 0.95  # 0.95 sugerido
 HMCR_MIN = 0.05  # 0.3 sugerido
 PAR = 0.005  # 0.75 sugerido
-IMPROVISACION = 1
 BERNOULLI_P = 0.5  #  http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
 MUTATION_P = 0.5  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
 SEED = 0
