@@ -18,10 +18,12 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 5
-HMCR_MAX = 0.95  # 0.95 sugerido
-HMCR_MIN = 0.05  # 0.3 sugerido
-PAR = 0.005  # 0.75 sugerido
+MAX_IMPROVISACIONES = 30
+HMCR_MAX = 1.00  # 0.95 sugerido
+HMCR_MIN = 0.95  # ,95  # 0.3 sugerido
+PAR_MAX = 0.010  # 0.010 sugerido
+PAR_MIN = 0.005  # 0.005
+PAR = 0
 BERNOULLI_P = 0.5  #  http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
 MUTATION_P = 0.5  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
 SEED = 0
@@ -184,20 +186,24 @@ def calcularHMCR(FEs):
     return hmcr_t
 
 # IMPLEMENTADA
-def crearNuevaArmonia(iteador_t):
-    """
+def calcularPAR(FEs):
+    # Implementar calculo de Harmony Memory Consideration Rate
+    global PAR_MAX
+    global PAR_MIN
+    global PAR
+    global MAX_IMPROVISACIONES
 
-    :rtype : Retorna un vector con la nueva armonia improvisada
-    """
+    par_t = PAR_MAX - ((PAR_MAX - PAR_MIN) / float(MAX_IMPROVISACIONES)) * FEs
+    PAR = par_t
+    return par_t
+
+# IMPLEMENTADA
+def crearNuevaArmonia(iteador_t):
     nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
     insert_best_and_worst()
-    """ El vector tupla_mejor_armonia guarda en su primera posicion, el indice de la solucion mas barata,
-        El segundo elemento guarda el valor de la solucion mas barata"""
-
     mejor_armonia = HARMONY_MEMORY[INDEX_BEST_HARMONY]
     j = 0
     while j < getCantidadColumnas() - 1:
-        # random.seed(SEED)
         numero_random = random.random()
         numero_random2 = random.random()
         hmcr_calculado = calcularHMCR(iteador_t)
@@ -210,8 +216,7 @@ def crearNuevaArmonia(iteador_t):
                 a = random.randint(0, HARMONY_MEMORY_SIZE - 1)
             vector_a = HARMONY_MEMORY[a]
             nueva_armonia[j] = vector_a[j]
-            if numero_random2 <= PAR:
-                # print "Se realiza mutacion genetica"
+            if numero_random2 <= calcularPAR(iteador_t):
                 nueva_armonia[j] = math.fabs(nueva_armonia[j] - 1)
         j += 1
 
@@ -236,8 +241,10 @@ def mejorIgualQueWorst(nuevaArmonia):
 # IMPLEMENTADA
 def reemplazarMejor(nuevaArmonia):
     global INDEX_BEST_HARMONY
-    HARMONY_MEMORY.append(nuevaArmonia)
-    INDEX_BEST_HARMONY = len(HARMONY_MEMORY) - 1
+    global HARMONY_MEMORY
+    #HARMONY_MEMORY.append(nuevaArmonia)
+    #INDEX_BEST_HARMONY = len(HARMONY_MEMORY) - 1
+    HARMONY_MEMORY[INDEX_BEST_HARMONY] = nuevaArmonia
 
 # IMPLEMENTADA
 def reemplazarPeor(nuevaArmonia):
