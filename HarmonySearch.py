@@ -1,7 +1,7 @@
 __author__ = 'agustinsalas'
 
 import datetime
-import MySQLdb as motor
+#import MySQLdb as motor
 import numpy as np
 import random
 import math
@@ -24,7 +24,7 @@ HMCR_MIN = 0.95  # ,95  # 0.3 sugerido
 PAR_MAX = 0.010  # 0.010 sugerido
 PAR_MIN = 0.005  # 0.005
 PAR = 0
-BERNOULLI_P = 0.5  #  http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
+BERNOULLI_P = 0.5  # http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
 MUTATION_P = 0.5  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
 SEED = 0
 RANDOM_UNO = 0
@@ -37,16 +37,23 @@ BEST_HARMONY = []
 WORST_HARMONY = []
 ARCHIVO = ''
 
+# CONTROL DE INSERCION A BD
+USAR_BD = False
+
 EXECUTION_REGISTER_ID = 0
+
 
 # IMPLEMENTADA
 def iniciacionHM():
     global HARMONY_MEMORY
-    insertExe_REGISTER()
+    if USAR_BD:
+        insertExe_REGISTER()
     genera_poblacion_inicial(HARMONY_MEMORY)
     nueva_armonia = nueva_armonia_agresiva()
     HARMONY_MEMORY.append(nueva_armonia)
-    almacenaMejorYPeorArmonia()
+    if USAR_BD:
+        almacenaMejorYPeorArmonia()
+
 
 # IMPLEMENTADA
 def nueva_armonia_agresiva():
@@ -79,6 +86,7 @@ def nueva_armonia_agresiva():
 
     return nueva_armonia
 
+
 # IMPLEMENTADA
 def genera_poblacion_inicial(HARMONY_MEMORY):
     i = 0
@@ -87,6 +95,7 @@ def genera_poblacion_inicial(HARMONY_MEMORY):
         HARMONY_MEMORY.append(vectorGenerado)
         # print vectorGenerado
         i += 1
+
 
 # IMPLEMENTADA
 def reparacion_de_armonia(vector_armonia):
@@ -131,6 +140,7 @@ def reparacion_de_armonia(vector_armonia):
 
     return vector_armonia
 
+
 # IMPLEMENTADA
 def cumple_restricciones(vector_armonia):
     a_transpuesta = np.transpose(getMatrizA())
@@ -146,6 +156,7 @@ def cumple_restricciones(vector_armonia):
     else:
         return False
 
+
 # IMPLEMENTADA
 def evaluarConFuncionObjetivo(armonia):
     vector_costo = getVectorCosto()
@@ -155,6 +166,7 @@ def evaluarConFuncionObjetivo(armonia):
         sumatoria = sumatoria + tono
 
     return sumatoria
+
 
 # IMPLEMENTADA
 def almacenaMejorYPeorArmonia():
@@ -175,6 +187,7 @@ def almacenaMejorYPeorArmonia():
 
     insert_best_and_worst()
 
+
 # IMPLEMENTADA
 def calcularHMCR(FEs):
     # Implementar calculo de Harmony Memory Consideration Rate
@@ -184,6 +197,7 @@ def calcularHMCR(FEs):
 
     hmcr_t = HMCR_MAX - ((HMCR_MAX - HMCR_MIN) / float(MAX_IMPROVISACIONES)) * FEs
     return hmcr_t
+
 
 # IMPLEMENTADA
 def calcularPAR(FEs):
@@ -197,10 +211,13 @@ def calcularPAR(FEs):
     PAR = par_t
     return par_t
 
+
 # IMPLEMENTADA
 def crearNuevaArmonia(iteador_t):
     nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
-    insert_best_and_worst()
+    if USAR_BD:
+        insert_best_and_worst()
+
     mejor_armonia = HARMONY_MEMORY[INDEX_BEST_HARMONY]
     j = 0
     while j < getCantidadColumnas() - 1:
@@ -220,9 +237,10 @@ def crearNuevaArmonia(iteador_t):
                 nueva_armonia[j] = math.fabs(nueva_armonia[j] - 1)
         j += 1
 
-    #print "costo nueva armonia: " + str(evaluarConFuncionObjetivo(nueva_armonia))
+    # print "costo nueva armonia: " + str(evaluarConFuncionObjetivo(nueva_armonia))
 
     return nueva_armonia
+
 
 # IMPLEMENTADA
 def mejorIgualQueBest(nuevaArmonia):
@@ -231,6 +249,7 @@ def mejorIgualQueBest(nuevaArmonia):
     else:
         return False
 
+
 # IMPLEMENTADA
 def mejorIgualQueWorst(nuevaArmonia):
     if evaluarConFuncionObjetivo(nuevaArmonia) <= evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_WORST_HARMONY]):
@@ -238,19 +257,22 @@ def mejorIgualQueWorst(nuevaArmonia):
     else:
         return False
 
+
 # IMPLEMENTADA
 def reemplazarMejor(nuevaArmonia):
     global INDEX_BEST_HARMONY
     global HARMONY_MEMORY
-    #HARMONY_MEMORY.append(nuevaArmonia)
-    #INDEX_BEST_HARMONY = len(HARMONY_MEMORY) - 1
+    # HARMONY_MEMORY.append(nuevaArmonia)
+    # INDEX_BEST_HARMONY = len(HARMONY_MEMORY) - 1
     HARMONY_MEMORY[INDEX_BEST_HARMONY] = nuevaArmonia
+
 
 # IMPLEMENTADA
 def reemplazarPeor(nuevaArmonia):
     global INDEX_WORST_HARMONY
     global HARMONY_MEMORY
     HARMONY_MEMORY[INDEX_WORST_HARMONY] = nuevaArmonia
+
 
 # IMPLEMENTADA
 def insert_best_and_worst():
@@ -284,6 +306,7 @@ def insert_best_and_worst():
         cur.close()
         del cur
         conn.close()
+
 
 # IMPLEMENTADA
 def insertExe_REGISTER():
@@ -334,6 +357,7 @@ def insertExe_REGISTER():
         del cur
         conn.close()
 
+
 def actualiza_exe_register():
     global EXECUTION_REGISTER_ID
     try:
@@ -364,6 +388,7 @@ def actualiza_exe_register():
         del cur
         conn.close()
 
+
 # IMPLEMENTADA
 def ejecucionMH(inputfile):
     global HARMONY_MEMORY
@@ -381,7 +406,8 @@ def ejecucionMH(inputfile):
     i = 1
     while i < MAX_IMPROVISACIONES:
         print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
-        almacenaMejorYPeorArmonia()
+        if USAR_BD:
+            almacenaMejorYPeorArmonia()
         nuevo_vector_armonia = crearNuevaArmonia(i)
         nuevo_vector_armonia = reparacion_de_armonia(nuevo_vector_armonia)
 
@@ -389,14 +415,17 @@ def ejecucionMH(inputfile):
             reemplazarMejor(nuevo_vector_armonia)
         elif mejorIgualQueWorst(nuevo_vector_armonia):
             reemplazarPeor(nuevo_vector_armonia)
-
-        insert_best_and_worst()
+        if USAR_BD:
+            insert_best_and_worst()
 
         # Incrementa la Improvisacion en uno
         # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
         print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
-    actualiza_exe_register()
+    if USAR_BD:
+        actualiza_exe_register()
+
+
 # IMPLEMENTADA
 def main(argv):
     inputfile = ''
