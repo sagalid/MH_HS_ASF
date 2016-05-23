@@ -17,8 +17,8 @@ from Parseo_Archivo import getMatrizA
 
 
 # PARAMETROS PARA TRABAJAR LA MH
-HARMONY_MEMORY_SIZE = 5
-MAX_IMPROVISACIONES = 30
+HARMONY_MEMORY_SIZE = 30
+MAX_IMPROVISACIONES = 1000
 HMCR_MAX = 1.00  # 0.95 sugerido
 HMCR_MIN = 0.95  # ,95  # 0.3 sugerido
 PAR_MAX = 0.010  # 0.010 sugerido
@@ -99,7 +99,7 @@ def genera_poblacion_inicial(HARMONY_MEMORY):
 
 # IMPLEMENTADA
 def reparacion_de_armonia(vector_armonia):
-    print "Valor armonia original: " + str(evaluarConFuncionObjetivo(vector_armonia))
+    #print "Valor armonia original: " + str(evaluarConFuncionObjetivo(vector_armonia))
     a_transpuesta = np.transpose(getMatrizA())
     matriz_a = getMatrizA()
     armonia_temporal = []
@@ -136,7 +136,7 @@ def reparacion_de_armonia(vector_armonia):
             armonia_temporal[lastIndexOf] = 1
 
     vector_armonia = armonia_temporal
-    print "Valor armonia reparada: " + str(evaluarConFuncionObjetivo(vector_armonia))
+    #print "Valor armonia reparada: " + str(evaluarConFuncionObjetivo(vector_armonia))
 
     return vector_armonia
 
@@ -214,7 +214,10 @@ def calcularPAR(FEs):
 
 # IMPLEMENTADA
 def crearNuevaArmonia(iteador_t):
-    nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
+    #nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
+    valor_p_bernoulli = 1 - (iteador_t / float(iteador_t + 10))
+    print "valor de bernoulli en iteracion:" + str(valor_p_bernoulli)
+    nueva_armonia = bernoulli.rvs(valor_p_bernoulli, size=getCantidadColumnas())
     if USAR_BD:
         insert_best_and_worst()
 
@@ -420,8 +423,11 @@ def ejecucionMH(inputfile):
 
         # Incrementa la Improvisacion en uno
         # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
+        print "VALOR ARMONIA EN ITERACION: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
         print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
+
+    print "VALOR FINAL: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
     if USAR_BD:
         actualiza_exe_register()
 
