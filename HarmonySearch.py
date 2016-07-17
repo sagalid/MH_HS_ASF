@@ -18,7 +18,7 @@ from Parseo_Archivo import getMatrizA
 
 # PARAMETROS PARA TRABAJAR LA MH
 HARMONY_MEMORY_SIZE = 30
-MAX_IMPROVISACIONES = 1000
+MAX_IMPROVISACIONES = 30000
 HMCR_MAX = 1.00  # 0.95 sugerido
 HMCR_MIN = 0.95  # ,95  # 0.3 sugerido
 PAR_MAX = 0.010  # 0.010 sugerido
@@ -216,7 +216,7 @@ def calcularPAR(FEs):
 def crearNuevaArmonia(iteador_t):
     #nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
     valor_p_bernoulli = 1 - (iteador_t / float(iteador_t + 10))
-    print "valor de bernoulli en iteracion:" + str(valor_p_bernoulli)
+    #print "valor de bernoulli en iteracion:" + str(valor_p_bernoulli)
     nueva_armonia = bernoulli.rvs(valor_p_bernoulli, size=getCantidadColumnas())
     if USAR_BD:
         insert_best_and_worst()
@@ -288,7 +288,7 @@ def insert_best_and_worst():
     print "Peor Valor: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_WORST_HARMONY]))
 
     try:
-        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
+        conn = motor.connect(host="localhost", user="BGBHS", passwd="ujahjosd8(((/&", db="BGBHS")
         cur = conn.cursor()
         cur.execute("INSERT INTO BEST_AND_WORST VALUES ("
                     "NULL, "
@@ -406,9 +406,13 @@ def ejecucionMH(inputfile):
         HARMONY_MEMORY[i] = armonia_reparada
         i += 1
 
+    #Archivo de Log
+    f = open(inputfile+"_resultado.txt", 'a')
+
+
     i = 1
     while i < MAX_IMPROVISACIONES:
-        print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
+        #print "<--------------------INI de la ejecucion: ", (i), "-------------------->"
         if USAR_BD:
             almacenaMejorYPeorArmonia()
         nuevo_vector_armonia = crearNuevaArmonia(i)
@@ -423,11 +427,15 @@ def ejecucionMH(inputfile):
 
         # Incrementa la Improvisacion en uno
         # print "Elementos en HM: " + str(len(HARMONY_MEMORY))
-        print "VALOR ARMONIA EN ITERACION: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
-        print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
+        #print "VALOR ARMONIA EN ITERACION"+i+": "+ str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
+        print str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
+	f.write(str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY])) + "\n")
+	#print "<--------------------FIN de la ejecucion: ", (i), "-------------------->"
         i += 1
 
     print "VALOR FINAL: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_BEST_HARMONY]))
+    #Cierra archivo de log
+    f.close()
     if USAR_BD:
         actualiza_exe_register()
 
