@@ -24,9 +24,9 @@ HMCR_MIN = 0.95  # ,95  # 0.3 sugerido
 PAR_MAX = 0.010  # 0.010 sugerido
 PAR_MIN = 0.005  # 0.005
 PAR = 0
-BERNOULLI_P = 0.5  # http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
+BERNOULLI_P = 0.005  # http://es.wikipedia.org/wiki/Ensayo_de_Bernoulli
 MUTATION_P = 0.5  # http://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
-SEED = 0
+SEED = 12345654
 RANDOM_UNO = 0
 INDEX_BEST_HARMONY = 0
 INDEX_WORST_HARMONY = 0
@@ -215,8 +215,11 @@ def calcularPAR(FEs):
 # IMPLEMENTADA
 def crearNuevaArmonia(iteador_t):
     #nueva_armonia = np.zeros(getCantidadColumnas(), dtype=np.int)
-    valor_p_bernoulli = 1 - (iteador_t / float(iteador_t + 10))
+    #valor_p_bernoulli = 1 - (iteador_t / float(iteador_t + 10))
+    valor_p_bernoulli = (iteador_t / float(iteador_t + 1))
+    #valor_p_bernoulli = BERNOULLI_P
     #print "valor de bernoulli en iteracion:" + str(valor_p_bernoulli)
+
     nueva_armonia = bernoulli.rvs(valor_p_bernoulli, size=getCantidadColumnas())
     if USAR_BD:
         insert_best_and_worst()
