@@ -291,7 +291,7 @@ def insert_best_and_worst():
     print "Peor Valor: " + str(evaluarConFuncionObjetivo(HARMONY_MEMORY[INDEX_WORST_HARMONY]))
 
     try:
-        conn = motor.connect(host="localhost", user="BGBHS", passwd="ujahjosd8(((/&", db="BGBHS")
+        conn = motor.connect(host="localhost", user="BGBHS", passwd="", db="BGBHS")
         cur = conn.cursor()
         cur.execute("INSERT INTO BEST_AND_WORST VALUES ("
                     "NULL, "
@@ -319,7 +319,7 @@ def insertExe_REGISTER():
     global EXECUTION_REGISTER_ID
     global ARCHIVO
     try:
-        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
+        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="", db="harmony")
         cur = conn.cursor()
         now = datetime.datetime.now()
         a = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -367,7 +367,7 @@ def insertExe_REGISTER():
 def actualiza_exe_register():
     global EXECUTION_REGISTER_ID
     try:
-        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="harmony2015", db="harmony")
+        conn = motor.connect(host="sagalid.cl", user="harmony", passwd="", db="harmony")
         cur = conn.cursor()
         now = datetime.datetime.now()
         a = now.strftime('%Y-%m-%d %H:%M:%S')
